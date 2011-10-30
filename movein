@@ -85,6 +85,7 @@ REMOTE_REPOS=~/git
 LOCAL_REPOS=~/.movein
 MRCONFIG=~/.mrconfig
 MOVEINRC=~/.moveinrc
+CREATE_REMOTE=1
 
 [ -e "$MOVEINRC" ] && . "$MOVEINRC"
 
@@ -235,9 +236,11 @@ new() {
         trap "unset GIT_DIR; unset GIT_WORK_TREE; rm -rf $LOCAL_REPO" 0
         mkdir -p "$LOCAL_REPO"
 
-        ssh $GIT_HOST "
-            GIT_DIR=$REMOTE_REPOS/$REPO_NAME git --bare init
-        " </dev/null
+        if [ $CREATE_REMOTE -ne 0 ]; then
+            ssh $GIT_HOST "
+                GIT_DIR=$REMOTE_REPOS/$REPO_NAME git --bare init
+            " </dev/null
+        fi
 
         export GIT_DIR="$LOCAL_REPO"
         git init --bare
